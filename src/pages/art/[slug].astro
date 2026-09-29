@@ -1,0 +1,275 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+// 1. Tell Astro which pages to generate based on the markdown files
+export async function getStaticPaths() {
+  const files = Object.entries(import.meta.glob('../../content/art/*.md', { eager: true }));
+  
+  return files.map(([path, file]) => {
+    const slug = path.split('/').pop().replace('.md', '');
+    return {
+      params: { slug: slug },
+      props: { art: file.frontmatter, Content: file.default }
+    };
+  });
+}
+
+// 2. Get the specific project data for this page
+const { art, Content } = Astro.props;
+
+// SMART YOUTUBE PARSER 
+// Extracts the 11-character ID from any YouTube link (youtu.be, youtube.com/watch, etc.)
+
+function getYouTubeId(url) {
+  if (!url) return '';
+  
+  // If the user pasted just the 11-character ID, return it directly
+  if (/^[a-zA-Z0-9_-]{11}$/.test(url)) return url;
+  
+  // Extract the ID from a full URL
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
+  return (match && match[1].length === 11) ? match[1] : url;
+}
+---
+
+<Layout title={`${art.title} | Portfolio`}>
+  <main class="project-page">
+    
+    <!-- Title & Line -->
+    <section class="title-section">
+      <h1 class="project-title">
+        {art.title}
+        {art.year && <span class="project-year">({art.year})</span>}
+      </h1>
+      <div class="divider"></div>
+    </section>
+
+    <!-- Challenge & Solution -->
+    {(art.challenge || art.solution) && (
+      <section class="challenge-solution-wrapper">
+        {art.challenge && (
+          <div class="text-column">
+            <h2 class="column-title">The challenge</h2>
+            <p class="column-text">{art.challenge}</p>
+          </div>
+        )}
+        {art.solution && (
+          <div class="text-column">
+            <h2 class="column-title">The solution</h2>
+            <p class="column-text">{art.solution}</p>
+          </div>
+        )}
+      </section>
+    )}
+
+    <!-- Smart Gallery supporting Images, MP4, and YouTube -->
+    <section class="project-gallery">
+      {art.gallery && art.gallery.map((media) => (
+        <div class={`media-block ${media.size === 'half' ? 'is-half' : 'is-full'}`}>
+          
+          <!-- Image Block -->
+          {media.type === 'image' && (
+            <img src={media.url} alt="Project media" class="project-image" loading="lazy" />
+          )}
+
+          <!-- Local MP4 Block -->
+          {media.type === 'mp4' && (
+            <video src={media.url} class="project-video-mp4" autoplay loop muted playsinline></video>
+          )}
+
+          <!-- YouTube Embed Block -->
+          {media.type === 'youtube' && (
+            <div class="youtube-wrapper">
+              <iframe 
+                src={`https://www.youtube.com/embed/${getYouTubeId(media.url)}?rel=0`} 
+                title="YouTube video player"
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+              </iframe>
+            </div>
+          )}
+          
+        </div>
+      ))}
+    </section>
+
+    <!-- Markdown Content -->
+    <div class="markdown-body">
+      <Content />
+    </div>
+
+  </main>
+</Layout>
+
+<style>
+  /* --- General Page Settings --- */
+  .project-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 100px; 
+    width: 100%;
+    max-width: 100vw; 
+    box-sizing: border-box;
+    position: relative;
+    overflow-x: hidden; 
+  }
+
+  /* --- Title & Line --- */
+  .title-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+    max-width: 1495px;
+    margin-bottom: 40px;
+    box-sizing: border-box;
+  }
+
+.project-title {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: clamp(24px, 4vw, 36px); 
+    line-height: 1.2;
+    color: #120E00;
+    margin: 0;
+    width: 100%;
+    
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    flex-wrap: wrap; 
+    gap: 12px; 
+  }
+
+  .project-year {
+    font-weight: 400;
+    color: #777777; 
+    font-size: 0.75em;
+  }
+
+  .divider {
+    width: 100%;
+    height: 0px;
+    border-top: 1.5px solid #000000;
+  }
+
+  /* --- Challenge & Solution --- */
+  .challenge-solution-wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: clamp(40px, 8vw, 120px); 
+    width: 100%;
+    max-width: 1360px;
+    margin-bottom: 60px;
+    box-sizing: border-box;
+  }
+
+  .text-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    max-width: 620px;
+    margin: 0 auto; 
+  }
+
+  .column-title {
+    font-family: 'Sora', sans-serif;
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 28px;
+    text-align: center;
+    letter-spacing: -0.05em;
+    color: #120E00;
+    margin: 0;
+  }
+
+  .column-text {
+    font-family: 'Sora', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5; 
+    color: #120E00;
+    margin: 0;
+  }
+
+  /* --- Smart Gallery --- */
+  .project-gallery {
+    display: flex;
+    flex-wrap: wrap; /* Allows elements to wrap into rows */
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1574px; 
+    /* Exact Figma gap between all media elements */
+    gap: clamp(20px, 1.56vw, 30px); 
+    box-sizing: border-box;
+  }
+
+  /* Full-width block */
+  .media-block.is-full {
+    width: 100%;
+  }
+
+  /* Half-width block (two elements side-by-side) */
+  .media-block.is-half {
+    /* 50% width MINUS half the gap to ensure they fit perfectly */
+    width: calc(50% - (clamp(20px, 1.56vw, 30px) / 2));
+  }
+
+  /* Stack media vertically on mobile screens */
+  @media (max-width: 768px) {
+    .media-block.is-half {
+      width: 100%;
+    }
+  }
+
+  /* Universal styles for images and local videos */
+  .project-image,
+  .project-video-mp4 {
+    width: 100%;
+    height: auto;
+    border-radius: clamp(15px, 1.56vw, 30px); /* Adaptive rounding */
+    display: block;
+    object-fit: cover;
+  }
+
+  /* YouTube Embed Wrapper */
+  .youtube-wrapper {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+    height: 0;
+    width: 100%;
+    border-radius: clamp(15px, 1.56vw, 30px);
+    overflow: hidden;
+    background-color: rgba(18, 14, 0, 0.05); /* Light placeholder background */
+  }
+
+  .youtube-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* --- Markdown Content --- */
+  .markdown-body {
+    width: 100%;
+    max-width: 1360px;
+    margin-top: 40px;
+    font-family: 'Sora', sans-serif;
+    color: #120E00;
+    box-sizing: border-box;
+  }
+
+  /* --- DESKTOP ADJUSTMENTS --- */
+  @media (min-width: 768px) {
+    .project-page {
+      padding-top: 60px;
+    }
+  }
+</style>

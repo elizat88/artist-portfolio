@@ -1,0 +1,99 @@
+backend:
+  name: git-gateway
+local_backend: true
+publish_mode: editorial_workflow
+
+media_folder: "public/projects"
+public_folder: "/projects"
+
+logo_url: "https://decapcms.org/img/logo.svg"
+
+collections:
+  - name: "art"
+    label: "✨ Portfolio Projects"
+    label_singular: "Project"
+    description: "Portfolio content manager. Fill in the details and build the project page using the Gallery Builder."
+    folder: "src/content/art"
+    create: true
+    slug: "{{slug}}"
+    
+    # Clean list view (e.g., "[1] Alien-Human Flatshare")
+    summary: "[{{order}}] {{title}}" 
+    sortable_fields: ['order', 'year', 'title']
+    
+    # Isolated folders for each project's media
+    media_folder: "public/projects/{{slug}}"
+    public_folder: "/projects/{{slug}}"
+
+    editor:
+      preview: false
+    
+    fields:
+      # ==========================================
+      # 📌 MAIN INFORMATION
+      # ==========================================
+      - { label: "🏷 Project Title", name: "title", widget: "string", hint: "E.g., Alien-Human Flatshare" }
+      - { label: "⚙️ Categories / Skills", name: "skills", widget: "string", hint: "Comma-separated. E.g., Graphic Design, Motion" }
+      - { label: "📅 Year", name: "year", widget: "number", value_type: "int", required: false }
+      - { label: "🔢 Order (1 is first)", name: "order", widget: "number", value_type: "int", default: 99, hint: "Determines the position on the Home page. Lower numbers appear first." }
+      
+      # ==========================================
+      # 🌟 MAIN COVER
+      # ==========================================
+      - { label: "🌟 Main Cover (Home Page)", name: "image", widget: "image", hint: "This thumbnail will be displayed on the Home page project grid." }
+      
+      # ==========================================
+      # 📝 TEXT DESCRIPTION
+      # ==========================================
+      - { label: "🎯 The Challenge", name: "challenge", widget: "text", required: false, hint: "Briefly describe the project challenge (optional)." }
+      - { label: "💡 The Solution", name: "solution", widget: "text", required: false, hint: "How did you approach and solve it? (optional)." }
+      
+      # ==========================================
+      # 📱 PAGE BUILDER
+      # ==========================================
+      - label: "🎨 Project Gallery Builder"
+        name: "gallery"
+        widget: "list"
+        hint: "Add photo and video blocks. Reorder them by dragging the left edge."
+        collapsed: false
+        types:
+          
+          # --- BLOCK 1: IMAGE ---
+          - label: "🖼 Image Block"
+            name: "image"
+            widget: "object"
+            summary: '📷 Image ({{fields.size}})'
+            fields:
+              - { label: "Type", name: "type", widget: "hidden", default: "image" }
+              - { label: "Upload Image", name: "url", widget: "image" }
+              - { label: "Display Size", name: "size", widget: "select", options: ["full", "half"], default: "full", hint: "Select 'half' to place two images side-by-side." }
+          
+          # --- BLOCK 2: LOCAL VIDEO ---
+          - label: "🎞 MP4 Video Block"
+            name: "mp4"
+            widget: "object"
+            summary: '🎞 MP4 Video ({{fields.size}})'
+            fields:
+              - { label: "Type", name: "type", widget: "hidden", default: "mp4" }
+              - { label: "Upload MP4", name: "url", widget: "file" }
+              - { label: "Display Size", name: "size", widget: "select", options: ["full", "half"], default: "full" }
+          
+          # --- BLOCK 3: YOUTUBE ---
+          - label: "🔴 YouTube Embed"
+            name: "youtube"
+            widget: "object"
+            summary: '🔴 YouTube ({{fields.size}})'
+            fields:
+              - { label: "Type", name: "type", widget: "hidden", default: "youtube" }
+              - label: "YouTube Link"
+                name: "url"
+                widget: "string"
+                hint: "Just paste the full YouTube link here (e.g., https://youtu.be/... or https://www.youtube.com/watch?...)"
+              - { label: "Display Size", name: "size", widget: "select", options: ["full", "half"], default: "full" }
+          # ==========================================
+          # 📝 FREEFORM CONTENT (OPTIONAL)
+          # ==========================================
+          - { label: "✍️ Additional Notes / Article", name: "body", widget: "markdown", required: false, hint: "Optional: Any long-form text, articles, or notes that will appear at the very bottom of the project page." }
+            
+
+            

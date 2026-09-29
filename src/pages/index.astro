@@ -1,17 +1,131 @@
 ---
+import Layout from '../layouts/Layout.astro';
 
+// Fetch all projects
+const artFiles = Object.entries(import.meta.glob('../content/art/*.md', { eager: true }));
+artFiles.sort((a, b) => {
+  const orderA = a[1].frontmatter.order || 999;
+  const orderB = b[1].frontmatter.order || 999;
+  return orderA - orderB;
+});
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="Eliza Tremzina | Portfolio">
+  <div class="projects-feed">
+    {artFiles.map(([path, file]) => {
+      const art = file.frontmatter;
+      const slug = path.split('/').pop().replace('.md', '');
+      
+      return (
+        <a href={`/art/${slug}`} class="project-tile">
+          <!-- Picture -->
+          <div class="picture-wrapper">
+            <img src={art.image} alt={art.title} loading="lazy" />
+          </div>
+          
+          <!-- Project Title & Skills -->
+          <div class="project-info">
+            <h2 class="project-name">{art.title}</h2>
+            <span class="project-skills">{art.skills}</span>
+          </div>
+        </a>
+      );
+    })}
+  </div>
+</Layout>
+
+<style>
+  /* Projects Container */
+  .projects-feed {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px;
+    gap: clamp(20px, 1.56vw, 30px);
+    width: 100%;
+    max-width: 1574px;
+    margin: 0 auto;
+    min-width: 0; /* Строгая защита от разрыва сетки (grid blowout) */
+  }
+
+  /* Project Tile */
+  .project-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px;
+    gap: clamp(10px, 0.78vw, 15px);
+    width: 100%;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s ease, opacity 0.3s ease; 
+    min-width: 0; 
+  }
+
+  .project-tile:hover {
+    opacity: 0.9;
+    transform: translateY(-6px); 
+  }
+
+  /* Picture */
+  .picture-wrapper {
+    width: 100%;
+    aspect-ratio: 1574 / 885;
+    border-radius: clamp(15px, 1.56vw, 30px);
+    overflow: hidden;
+    background-color: rgba(18, 14, 0, 0.03); /* Легкий фон, пока грузится фото */
+  }
+
+  .picture-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Project Title & Skills Container */
+  .project-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start; /* Исправляет баг, если текст переносится на две строки */
+    width: 100%;
+    gap: 20px; 
+  }
+
+  /* Project Title */
+  .project-name {
+    font-family: 'Sora', sans-serif;
+    font-weight: 600;
+    font-size: clamp(16px, 1.14vw, 22px);
+    line-height: 1.25; 
+    color: #120E00;
+    margin: 0;
+    flex: 1; /* Позволяет заголовку занимать нужное место */
+  }
+
+  /* Skills */
+  .project-skills {
+    font-family: 'Sora', sans-serif;
+    font-weight: 400;
+    font-size: clamp(14px, 1.14vw, 22px);
+    line-height: 1.25;
+    text-align: right;
+    color: #120E00;
+    margin: 0;
+    flex-shrink: 0; /* Запрещает навыкам сжиматься в узкую колонку */
+  }
+
+  /* Mobile adaptation */
+  @media (max-width: 600px) {
+    .project-info {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+    }
+    .project-skills {
+      text-align: left;
+      opacity: 0.7;
+    }
+  }
+</style>
