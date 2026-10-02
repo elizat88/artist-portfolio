@@ -4,7 +4,7 @@ backend:
 local_backend: true
 publish_mode: editorial_workflow
 
-media_folder: "public/projects"
+media_folder: "/public/projects"
 public_folder: "/projects"
 
 logo_url: "https://decapcms.org/img/logo.svg"
@@ -23,7 +23,7 @@ collections:
     sortable_fields: ['order', 'year', 'title']
     
     # Isolated folders for each project's media
-    media_folder: "public/projects/{{slug}}"
+    media_folder: "/public/projects/{{slug}}"
     public_folder: "/projects/{{slug}}"
 
     editor:
