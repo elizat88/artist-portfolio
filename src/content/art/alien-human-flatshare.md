@@ -2,7 +2,7 @@
 title: "Alien-Human Flatshare in 2226"
 skills: "Graphic Design"
 year: 2026
-image: "/projects/Alien_ProjectPage/Alien_Cover.jpg"
+image: "/projects/alien-human-flatshare/Alien_Cover.jpg"
 
 order: 2
 challenge: "As part of a knowledge exchange collaboration between Central Saint Martins and the Museum of the Home, my group was briefed to create a future scenario and a multisensory room-set for it. But how do you imagine the future positively without falling into the dystopian trap that speculative design so often reaches for?"
@@ -10,33 +10,33 @@ solution: "We imagined a domestic future where humans and aliens live side-by-si
 
 gallery:
   - type: "image"
-    url: "/projects/Alien_ProjectPage/Alien_Cover.jpg"
+    url: "/projects/alien-human-flatshare/Alien_Cover.jpg"
     size: "full"
     
   - type: "image"
-    url: "/projects/Alien_ProjectPage/Alien_Studio1.jpg"
+    url: "/projects/alien-human-flatshare/Alien_Studio1.jpg"
     size: "half"
 
   - type: "image"
-    url: "/projects/Alien_ProjectPage/Alien_Studio2.jpg"
+    url: "/projects/alien-human-flatshare/Alien_Studio2.jpg"
     size: "half"
 
   - type: "image"
-    url: "/projects/Alien_ProjectPage/Alien_Book1.jpg"
+    url: "/projects/alien-human-flatshare/Alien_Book1.jpg"
     size: "full"
 
   - type: "image"
-    url: "/projects/Alien_ProjectPage/Alien_Book2.jpg"
+    url: "/projects/alien-human-flatshare/Alien_Book2.jpg"
     size: "full"
 
   - type: "mp4"
-    url: "/projects/Alien_ProjectPage/ActivityBook_Video.mp4"
+    url: "/projects/alien-human-flatshare/ActivityBook_Video.mp4"
 
   - type: "image"
-    url: "/projects/Alien_ProjectPage/Alien_ID1.jpg"
+    url: "/projects/alien-human-flatshare/Alien_ID1.jpg"
     size: "full"
 
   - type: "image"
-    url: "/projects/Alien_ProjectPage/Alien_ID2.jpg"
+    url: "/projects/alien-human-flatshare/Alien_ID2.jpg"
     size: "full"
 ---
